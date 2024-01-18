@@ -1,0 +1,55 @@
+﻿<?php
+
+session_start();
+
+?>
+<!-- Barra de navegación -->
+<nav class="bg-blue-500 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Logo o nombre del sitio -->
+        <a href="/" class="text-white text-xl font-bold">Sneeaker Shoes</a>
+
+        <!-- Menú de navegación -->
+        <ul class="flex space-x-4">
+            <li><a href="/Landing" class="text-white hover:text-gray-300">Inicio</a></li>
+            <li><a href="/Categorias" class="text-white hover:text-gray-300">Categorias</a></li>
+            <li><a href="/Productos" class="text-white hover:text-gray-300">Productos</a></li>
+            <li><a href="/Carrito" class="text-white hover:text-gray-300"><?php
+                                                                            if (isset($_SESSION["cart"])) {
+                                                                                echo count($_SESSION["cart"]);
+                                                                            } ?> Carrito <?php
+                                                                                            if (isset($_SESSION["cart"])) {
+                                                                                                $cart = $_SESSION["cart"];
+                                                                                                if (count($cart) > 0) {
+                                                                                                    require_once($GLOBALS["path"] . '/Controllers/ProductController.php');
+                                                                                                    $productController = new ProductController();
+                                                                                                    $cartContents = $_SESSION['cart'];
+                                                                                                    $total = 0;
+                                                                                                    foreach ($cartContents as $productID => $quantity) :
+                                                                                                        $product = $productController->getProductByID($productID);
+                                                                                                        $total += $quantity * $product['preu'];
+                                                                                                    endforeach;
+                                                                                                    echo $total . "€";
+                                                                                                } else {
+                                                                                                    echo "Vacio";
+                                                                                                }
+                                                                                            }
+                                                                                            ?></a></li>
+            <li><a href="/Orders" class="text-white hover:text-gray-300">Mis pedidos</a></li>
+        </ul>
+
+        <!-- Botón de inicio de sesión -->
+        <?php
+        if (isset($_SESSION["user"]["nom"])) {
+            // Texto A: Usuario tiene sesión iniciada
+        ?><a href="/Logout" class="text-white hover:text-gray-300">Cerrar Sesión @<b><?= $_SESSION["user"]["nom"] ?></b></a><?php
+                                                                                                                        } else {
+                                                                                                                            // Texto B: No hay sesión iniciada
+                                                                                                                            ?><a href="/Login" class="text-white hover:text-gray-300">Iniciar Sesión</a><?php
+                                                                                                                                                                                                    }
+
+
+                                                                                                                                                                                                        ?>
+
+    </div>
+</nav>

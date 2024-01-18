@@ -1,0 +1,51 @@
+<?php
+
+require $GLOBALS["path"] . "/Controllers/OrderController.php";
+?>
+
+<div class="font-sans bg-gray-100">
+
+
+    <div class="container mx-auto my-8 p-8 bg-white shadow-md">
+        <h1 class="text-3xl font-semibold mb-4">Mis Pedidos</h1>
+
+        <?php
+        $orderController = new OrderController;
+        $orders = $orderController -> getUserOrders($_SESSION["user"]["id"]);
+    
+        foreach ($orders as $order) {
+        ?>
+            <div class="mb-8 border-b pb-4">
+                <p class="text-lg font-semibold mb-2">Pedido #<?= $order['id']; ?> - <?= $order['order_date']; ?></p>
+                <table class="w-full border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border p-2">Item</th>
+                            <th class="border p-2">Precio</th>
+                            <th class="border p-2">Cantidad</th>
+                            <th class="border p-2">Precio Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($order['items'] as $item) {
+                        ?>
+                            <tr>
+                                <td class="border p-2"><?= $item['product_name']; ?></td>
+                                <td class="border p-2"><?= $item['total_price']; ?></td>
+                                <td class="border p-2"><?= $item['quantity']; ?></td>
+                                <td class="border p-2"><?= $item['total_price'] * $item['quantity']; ?></td>
+                            </tr>
+                        <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php
+        }
+        ?>
+    </div>
+
+
+</div>

@@ -1,0 +1,20 @@
+<div class="bg-gray-100 font-sans">
+
+    <div class="container mx-auto mt-8">
+        <div class="bg-white p-8 rounded-md shadow-md max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold mb-4">¡Gracias por tu Compra!</h2>
+            <p class="text-gray-700">Agradecemos tu compra en nuestra tienda. Tu pedido ha sido recibido y será procesado pronto.</p>
+
+            <div class="mt-8">
+                <a href="/" class="text-blue-500">Volver a la Página Principal</a>
+            </div>
+        </div>
+    </div>
+
+    <?php
+
+// Vaciar el carrito (eliminar la variable de sesión)
+unset($_SESSION['cart']);
+
+exit();
+?>

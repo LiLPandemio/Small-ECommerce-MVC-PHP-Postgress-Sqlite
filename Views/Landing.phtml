@@ -1,0 +1,69 @@
+﻿<?php
+require($GLOBALS["path"] . "/CONFIG.php");
+require_once($GLOBALS["path"] . '/Controllers/ProductController.php');
+require_once($GLOBALS["path"] . '/Controllers/CategoryController.php');
+
+// Crear instancias de los controladores
+$productController = new ProductController();
+$categoryController = new CategoryController();
+
+// Obtener todas las categorías
+$categorias = $categoryController->getAllCategories();
+
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Tienda - Bienvenido</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+
+    <main class="container mx-auto mt-8">
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Categorías</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php foreach ($categorias as $categoria) : ?>
+                    <div class="bg-white p-6 rounded-md shadow-md">
+                        <h3 class="text-lg font-semibold mb-4"><?= $categoria['nom'] ?></h3>
+                        <?php
+                        // Obtener productos por categoría
+                        $productos = $productController->getProductsByCategory($categoria['id']);
+
+                        foreach ($productos as $producto) :
+                        ?>
+                            <div>
+                                <p><?= $producto['nom'] ?></p>
+                                <img src="<?= $producto['imatge'] ?>" alt="">
+                                <p class="text-blue-500 font-semibold"><?= $producto['preu'] ?></p>
+                                <form action="<?= $GLOBALS["link"] ?>/Public/process_cart.php" method="post" class="flex items-center space-x-2">
+                                    <input type="hidden" name="productID" value="<?= $producto['id'] ?>">
+
+                                    <label for="quantity" class="text-gray-600">Cantidad:</label>
+                                    <input type="number" id="quantity" name="quantity" min="1" value="1" required class="border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500">
+
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                                        Agregar al Carrito
+                                    </button>
+                                </form>
+                            </div>
+                            <br>
+                            <hr>
+                            <br>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </main>
+
+
+</body>
+
+</html>

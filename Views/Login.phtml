@@ -1,0 +1,45 @@
+﻿<div class="bg-gray-100 flex items-center justify-center">
+
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h2 class="text-2xl font-semibold mb-4">Iniciar Sesión</h2>
+
+        <form action="<?= $GLOBALS["link"] ?>/Public/process_login.php" method="post">
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
+                <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Contraseña</label>
+                <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" required>
+            </div>
+            <?php
+            // Construir la URL completa
+            $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $host = $_SERVER['HTTP_HOST'];
+            $uri = $_SERVER['REQUEST_URI'];
+
+            $url = "$protocolo://$host$uri";
+
+           
+            // Extraer la ruta de la URL
+            $path = parse_url($url, PHP_URL_PATH);
+
+            // Dividir la ruta en partes usando "/"
+            $parts = explode('/', $path);
+
+            if (isset($parts[2])) {
+                if ($parts[2] == "Fail") {
+                    echo "Lo has intentado, no ha estado mal, pero no parece que seas quien dices ser 😬🥱😶‍🌫️";
+                }
+            }
+            ?>
+            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                Iniciar Sesión
+            </button>
+            <div style="margin-top: 20px;">
+                <a href="/Registro">No tienes cuenta?</a>
+            </div>
+        </form>
+    </div>
+</div>

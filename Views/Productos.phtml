@@ -1,0 +1,118 @@
+﻿<?php
+
+
+require($GLOBALS["path"] . "/CONFIG.php");
+require_once($GLOBALS["path"] . '/Controllers/ProductController.php');
+require_once($GLOBALS["path"] . '/Controllers/CategoryController.php');
+
+// Crear instancias de los controladores
+$productController = new ProductController();
+$categoryController = new CategoryController();
+
+// Obtener todas las categorías
+$categorias = $categoryController->getAllCategories();
+
+// Obtener todos los productos
+$productos = $productController->getAllProducts();
+
+// Construir la URL completa
+$protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$host = $_SERVER['HTTP_HOST'];
+$uri = $_SERVER['REQUEST_URI'];
+$url = "$protocolo://$host$uri";
+
+// Mostrar la URL actual
+
+
+// Extraer la ruta de la URL
+$currentpath = parse_url($url, PHP_URL_PATH);
+
+// Dividir la ruta en partes usando "/"
+$parts = explode('/', $currentpath);
+if (isset($parts[2])) {
+    #MOSTRAR VIEW DETALLADO DEL PRODUCTO $parts[2]
+    // Crear una instancia del controlador de productos
+    $productController = new ProductController();
+
+    // Obtener la información del producto por ID
+    $productInfo = $productController->getProductByID($parts[2]);
+
+    // Verificar si se encontró el producto
+    if ($productInfo) {
+        // Ahora $productInfo contiene la información del producto específico
+        // Puedes acceder a los campos específicos, por ejemplo:
+        $productName = $productInfo['nom'];
+        $productImage = $productInfo['imatge'];
+        $productPrice = $productInfo['preu'];
+
+?>
+        <main class="container mx-auto mt-8">
+            <section class="flex">
+                <div class="w-1/2">
+                    <img src="<?= $productImage ?>" alt="<?= $productName ?>" class="w-full h-auto">
+                </div>
+                <div class="w-1/2 px-8">
+                    <h2 class="text-3xl font-semibold mb-4"><?= $productName ?></h2>
+                    <p class="text-gray-700 text-lg mb-4">Este producto es fantastico! Compralo!</p>
+                    <p class="text-blue-500 text-xl font-semibold mb-4"><?= $productPrice ?></p>
+                    <form action="<?= $GLOBALS["link"] ?>/Public/process_cart.php" method="post" class="flex items-center space-x-2">
+                        <input type="hidden" name="productID" value="<?= $productInfo['id'] ?>">
+
+                        <label for="quantity" class="text-gray-600">Cantidad:</label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" required class="border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500">
+
+                        <form action="<?= $GLOBALS["link"] ?>/Public/process_cart.php" method="post" class="flex items-center space-x-2">
+                            <input type="hidden" name="productID" value="<?= $producto['id'] ?>">
+
+                            <label for="quantity" class="text-gray-600">Cantidad:</label>
+                            <input type="number" id="quantity" name="quantity" min="1" value="1" required class="border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500">
+
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                                Agregar al Carrito
+                            </button>
+                        </form>
+                    </form>
+
+                </div>
+            </section>
+        </main>
+    <?php
+    } else {
+        // Manejar el caso en el que no se encuentra el producto
+        echo "Producto no encontrado";
+    }
+} else {
+    #MOSTRAR TODOS LOS PRODUCTOS
+    ?>
+
+    <main class="container mx-auto mt-8">
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Todos los Productos</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php foreach ($productos as $producto) : ?>
+                    <div class="bg-white p-6 rounded-md shadow-md">
+                        <h3 class="text-lg font-semibold mb-4"><?= $producto['nom'] ?></h3>
+                        <img src="<?= $producto['imatge'] ?>" alt="<?= $producto['nom'] ?>">
+                        <p class="text-blue-500 font-semibold"><?= $producto['preu'] ?></p>
+                        <form action="<?= $GLOBALS["link"] ?>/Public/process_cart.php" method="post" class="flex items-center space-x-2">
+                            <input type="hidden" name="productID" value="<?= $producto['id'] ?>">
+
+                            <label for="quantity" class="text-gray-600">Cantidad:</label>
+                            <input type="number" id="quantity" name="quantity" min="1" value="1" required class="border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500">
+
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                                Agregar al Carrito
+                            </button>
+                        </form>
+                        <a href="/Productos/<?= $producto['id'] ?>" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Ver mas info</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </main>
+<?php
+}
+
+
+?>

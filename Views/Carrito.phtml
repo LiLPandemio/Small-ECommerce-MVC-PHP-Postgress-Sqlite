@@ -1,0 +1,79 @@
+﻿<?php
+// Verifica si la variable de sesión del carrito existe
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = array();
+}
+
+// Verificar si la sesión del carrito está inicializada
+if (isset($_SESSION['cart'])) {
+?>
+    <?php
+    // Obtener el contenido del carrito
+    $cartContents = $_SESSION['cart'];
+    // Ahora $cartContents contiene un array con el contenido del carrito
+    // Puedes realizar cualquier manipulación que necesites con esta variable
+    // Por ejemplo, puedes iterar sobre los elementos del carrito y mostrar la información
+    require_once($GLOBALS["path"] . '/Controllers/ProductController.php');
+    $productController = new ProductController();
+    ?>
+
+
+
+    <div class="bg-gray-100 font-sans">
+        <main class="container mx-auto mt-8">
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Carrito de Compras</h2>
+                <a href="/Public/process_cart_empty.php">Vaciar carrito</a><br>
+
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b">Miniatura</th>
+                            <th class="py-2 px-4 border-b">Nombre</th>
+                            <th class="py-2 px-4 border-b">Cantidad</th>
+                            <th class="py-2 px-4 border-b">Precio por unidad</th>
+                            <th class="py-2 px-4 border-b">Total</th>
+                            <th class="py-2 px-4 border-b">Eines</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($cartContents as $productID => $quantity) : ?>
+                            <?php $product = $productController->getProductByID($productID); ?>
+                            <tr>
+                                <td class="py-2 px-4 border-b">
+                                    <img src="<?= $product['imatge'] ?>" alt="<?= $product['nom'] ?>" class="w-12 h-12 object-cover rounded">
+                                </td>
+                                <td class="py-2 px-4 border-b"><?= $product['nom'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $quantity ?></td>
+                                <td class="py-2 px-4 border-b"><?= $product['preu'] ?> €</td>
+                                <td class="py-2 px-4 border-b"><?= $quantity * $product['preu'] ?> €</td>
+                                <td class="py-2 px-4 border-b">
+                                    <form action="/Public/modificar_cesta.php?quitar=<?= $product["id"] ?>" method="post">
+                                        <button class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300" type="submit">Treure del cabás</button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <br>
+                <form action="<?= $GLOBALS["link"] ?>/Public/process_order.php" method="post">
+                    <input type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300" value="Procesar pago">
+                </form>
+                <?php if (empty($cartContents)) : ?>
+                    <p class="text-center mt-4">Tu carrito está vacío.</p>
+                <?php endif; ?>
+            </section>
+        </main>
+    </div>
+
+
+
+
+
+
+<?php
+} else {
+    echo "El carrito está vacío.";
+}
